@@ -10,18 +10,28 @@ class OpenView(View):
         menus = Menu.objects.all()
         categories = Category.objects.all()
 
-        results = [{"menu_name":menu.name} for menu in menus] + \
-                [{
-                    "menu_name" : Menu.objects.get(id=category.menu_id).name,
-                    "category_name" : category.name,
-                    "description_title" : category.description_title,
-                    "description" : category.description
-                } if category.description_title else {
-                    "menu_name" : Menu.objects.get(id=category.menu_id).name,
-                    "category_name" : category.name,
-                    "description_title" : category.description_title,
-                    "description" : category.description
-                } for category in categories ]
+        results = [{
+                "menu_name" : menu.name,
+                "category_list" :[{
+                    "categoty_name" : category.name,
+                    "description_name" : category.description_title if category.description_title else None, 
+                    "description" : category.description if category.description else None 
+
+                }for category in menu.category_set.all()]
+        }for menu in menus]
+
+        # results = [{"menu_name":menu.name} for menu in menus] + \
+        #         [{
+        #             "menu_name" : Menu.objects.get(id=category.menu_id).name,
+        #             "category_name" : category.name,
+        #             "description_title" : category.description_title,
+        #             "description" : category.description
+        #         } if category.description_title else {
+        #             "menu_name" : Menu.objects.get(id=category.menu_id).name,
+        #             "category_name" : category.name,
+        #             "description_title" : category.description_title,
+        #             "description" : category.description
+        #         } for category in categories ]
 
         return JsonResponse({'result': results}, status=200)
 
@@ -197,6 +207,9 @@ class DetailProductView(View):
     def get(self, request):
         product_id = request.GET.get('product_id', None)
         product = Product.objects.get(id=product_id)
+        #1 공통적으로 계속 들어가는 내용만 먼저 딕션너리 ex) menu, category, product_name
+        #for 문이 필요 없는 내용만
+        #2 for 문의 결과(list)을 공통 딕션너리에 추가 my_dict['featue'] = [{}]
         category = product.category
         menu = category.menu
         product.count += 1
