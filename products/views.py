@@ -34,6 +34,7 @@ class OpenAllCategoryView(View):
 
         for category in categories:
             results = []
+            
             if category.description_title:
                 results.append(
                 {
@@ -50,6 +51,7 @@ class OpenAllCategoryView(View):
                     "category_name" : category.name
                 }
             )
+          
             products = Product.objects.filter(category_id=category.id)
             for product in products:
                 product_name = product.name
@@ -252,16 +254,3 @@ class DetailProductView(View):
         )
 
         return JsonResponse({'result': results}, status=200)
-
-# class FeatureFilteringView(View):
-#     def get(self, request):
-#         menu = Menu.objects.get(id=1) # url 처리
-#         categories = Category.objects.filter(menu_id=menu.id)
-#         products = []
-
-#         for category in categories:
-#             if Product.objects.filter(category_id=category.id):
-#                 products.append(Product.objects.filter(category_id=category.id))
-#     def get(self, request):
-
-#         products = Product.objects.filter(feature=1)
