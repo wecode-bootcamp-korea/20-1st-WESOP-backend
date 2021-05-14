@@ -23,11 +23,8 @@ class DetailProductView(View):
                 "content_image_url" : product.content_image_url
         }
         
-        feature_category_id = []
         features = product.feature.all()
-        for feature in features:
-            if feature.feature_category_id not in feature_category_id:
-                feature_category_id.append(feature.feature_category_id)
+        feature_category_id = set([feature.feature_category_id for feature in features])
 
         feature_result = []
         for id in feature_category_id:
@@ -37,22 +34,21 @@ class DetailProductView(View):
                 feature_detail_result.append(i.name)
             feature_result.append(
                 {
-                    "feature_category_name" :feature_category_name,
+                    "feature_category_name" : feature_category_name,
                     "features" : feature_detail_result
                 }
             )
 
         results["feature"] = feature_result
 
-        ingredient_result = []
         ingredients = product.ingredient.all()
-        for ingredient in ingredients:
-            ingredient_result.append(ingredient.name)
+        ingredient_result = [ingredient.name for ingredient in ingredients]
             
         results["ingredient"] = ingredient_result
-
-        product_selection_result = []
+       
         product_selections = ProductSelection.objects.filter(product_id=product.id)
+        product_selection_result = []
+
         for product_selection in product_selections:
             product_selection_result.append(
                 {
