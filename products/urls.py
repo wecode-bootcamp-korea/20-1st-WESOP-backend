@@ -1,7 +1,7 @@
 from django.urls import path
 
-from products.views import FilteringView
+from products.views import FilteringAtMenuView
 
 urlpatterns = [
-    path('/filter', FilteringView.as_view())
+    path('/filter/<str:menuname>', FilteringAtMenuView.as_view())
 ]
