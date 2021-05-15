@@ -38,13 +38,13 @@ class FilteringAtMenuView(View):
         total_results = []
 
         for category in categories:
-            first_products         = Product.objects.filter(category_id=category.id, feature=first_id)
+            first_products         = Product.objects.filter(Q(category_id=category.id) & Q(feature=first_id))
             first_filter_products  = [product for product in first_products]
 
-            second_products        = Product.objects.filter(category_id=category.id, feature=second_id)
+            second_products        = Product.objects.filter(Q(category_id=category.id) & Q(feature=second_id))
             second_filter_products = [product for product in second_products if product in first_filter_products]
 
-            third_products         = Product.objects.filter(category_id=category.id, feature=third_id)
+            third_products         = Product.objects.filter(Q(category_id=category.id) & Q(feature=third_id))
             third_filter_products  = [product for product in third_products if product in second_filter_products]
 
             results = []
@@ -124,16 +124,16 @@ class FilteringAtCategoryView(View):
             return JsonResponse({'MESSAGE':'INVALID_PATH'}, status=404)
 
     def FilteringProducts(self, category, first_id, second_id, third_id):
-        first_products         = Product.objects.filter(category_id=category.id, feature=first_id)
+        first_products         = Product.objects.filter(Q(category_id=category.id) & Q(feature=first_id))
         first_filter_products  = [product for product in first_products]
 
-        second_products        = Product.objects.filter(category_id=category.id, feature=second_id)
+        second_products        = Product.objects.filter(Q(category_id=category.id) & Q(feature=second_id))
         second_filter_products = [product for product in second_products if product in first_filter_products]
 
-        third_products         = Product.objects.filter(category_id=category.id, feature=third_id)
+        third_products         = Product.objects.filter(Q(category_id=category.id) & Q(feature=third_id))
         third_filter_products  = [product for product in third_products if product in second_filter_products]
 
-        results = []
+        results  = []
 
         for product in third_filter_products:
             product_name = product.name
