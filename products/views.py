@@ -7,8 +7,16 @@ from products.models import FeatureCategory, Product, ProductSelection
 
 class DetailProductView(View):
     def get(self, request):
-        product_id    = request.GET.get('product_id', None)
-        product       = Product.objects.get(id=product_id)
+        product_id = request.GET.get('product_id', None)
+
+        if product_id and Product.objects.filter(id=product_id).exists():
+            product = Product.objects.get(id=product_id)
+            results = self.ShowProduct(product)
+        else:
+            return JsonResponse({'MESSAGE':'INVALID_PATH'}, status=404)
+        return JsonResponse({'result':results}, status=200)
+
+    def ShowProduct(self, product):
         category      = product.category
         menu          = category.menu
         product.count += 1
@@ -49,4 +57,4 @@ class DetailProductView(View):
                                         } for product_selection in product_selections]
         results["product_selection"] = product_selection_result
 
-        return JsonResponse({'result': results}, status=200)
+        return results
