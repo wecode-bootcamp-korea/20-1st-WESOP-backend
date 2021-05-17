@@ -14,15 +14,15 @@ class ProductListView(View):
         q = Q()
 
         if menu_id and Menu.objects.filter(id=menu_id).exists():
-            q = Q(category__menu_id=menu_id)
+            q          = Q(category__menu_id=menu_id)
             categories = Category.objects.filter(menu_id=menu_id)
         elif category_id and Category.objects.filter(id=category_id):
-            q = Q(category_id=category_id)
+            q          = Q(category_id=category_id)
             categories = Category.objects.filter(id=category_id)
         else:
             return JsonResponse({'MESSAGE':'INVALID_PATH'}, status=404)
         
-        products = Product.objects.filter(q)
+        products      = Product.objects.filter(q)
         total_results = []
 
         for category in categories:
