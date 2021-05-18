@@ -29,18 +29,14 @@ class ProductListView(View):
             ingredients        = product.ingredient.all()
             product_selections = ProductSelection.objects.filter(product_id=product.id)
 
-            features            = product.feature.all()
-            feature_category_id = set([feature.feature_category_id for feature in features])
-            feature_result      = []
-            for id in feature_category_id:
-                feature_category_name = FeatureCategory.objects.get(id=id).name
-                feature_detail_result = [i.name for i in features.filter(feature_category_id=id)]
-                feature_result.append(
-                    {
-                        "feature_category_name" : feature_category_name,
-                        "features"              : feature_detail_result
-                    }
-                )
+            feature_result = [
+                {
+                        "feature_category_name" : feature_category.name,
+                        "features" : [feature.name for feature in feature_category.feature_set.filter(product=product)]
+                } for feature_category in set(FeatureCategory.objects.filter(feature__in=product.feature.all()))
+            ]
+            results["feature"] = feature_result
+            
             results = [
                 {
                     "menu_name"                  : menu.name,
