@@ -52,11 +52,11 @@ class ProductListView(View):
                     "product_name"               : product.name,
                     "product_id"                 : product.id,
                     "product_description"        : product.description,
-                    "product_feature"            : feature_result,
+                    "product_features"           : feature_result,
                     "product_content"            : product.content,
                     "product_content_image_url"  : product.content_image_url,
-                    "product_ingredient"         : [ingredient.name for ingredient in ingredients],
-                    "product_selection"          : [
+                    "product_ingredients"        : [ingredient.name for ingredient in ingredients],
+                    "product_selections"         : [
                         {
                             "size"      : product_selection.size,
                             "price"     : product_selection.price,
