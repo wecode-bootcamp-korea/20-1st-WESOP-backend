@@ -23,6 +23,7 @@ class OrderCheckView(View):
         try:
             user = request.user
             status_id = OrderStatus.objects.get(name='주문 전').id
+            status_id_done = OrderStatus.objects.get(name='주문 후').id
             order_id= Order.objects.get(status_id=status_id).id #에러 except
             cartlists = OrderList.objects.all() 
 
@@ -31,12 +32,10 @@ class OrderCheckView(View):
             for cartlist in cartlists:
                 selection_id = cartlist.product_selection_id
                 select        = ProductSelection.objects.get(id=selection_id)
-                status_id    =OrderStatus.objects.get(name='주문 전').id
-                status_id_done = OrderStatus.objects.get(name='주문 후').id
                 total        = select.price * cartlist.quantity
 
                 Order.objects.filter(status_id=status_id).update(
-                        status_id    = status_id_done, #status table에 yes 는 id 1 , no는 id 2로 설정 예정
+                        status_id    = status_id_done, 
                         address      = user.address,
                         memo         = '',
                         total_price  = total if (total >= 50000) else (total+3000), 
