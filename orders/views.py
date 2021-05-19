@@ -16,25 +16,28 @@ from my_settings     import SECRET
 
 from users.utils     import Authorization_decorator
 
-
 class OrderCheckView(View):
     @Authorization_decorator
     def get(self, request):
         try:
-            user = request.user
-            status_id = OrderStatus.objects.get(name='주문 전').id
+            user           = request.user
+            status_id      = OrderStatus.objects.get(name='주문 전').id
             status_id_done = OrderStatus.objects.get(name='주문 후').id
-            order_id= Order.objects.get(status_id=status_id).id #에러 except
-            cartlists = OrderList.objects.all() 
+            
+            if (not Order.objects.filter(status_id=status_id, user_id=user.id)):
+                raise Exception
+
+            order          = Order.objects.filter(status_id=status_id, user_id=user.id) 
+            cartlists      = OrderList.objects.filter(order_id=order.id)
 
             result=[]
 
             for cartlist in cartlists:
                 selection_id = cartlist.product_selection_id
-                select        = ProductSelection.objects.get(id=selection_id)
+                select       = ProductSelection.objects.get(id=selection_id)
                 total        = select.price * cartlist.quantity
 
-                Order.objects.filter(status_id=status_id).update(
+                order.update(
                         status_id    = status_id_done, 
                         address      = user.address,
                         memo         = '',
@@ -43,20 +46,20 @@ class OrderCheckView(View):
                     )
             
                 order_dict = {
-                    'name': Product.objects.get(id=select.product_id).name,
-                    'quantity': cartlist.quantity ,
-                    'total_price': Order.objects.get(id=cartlist.order_id).total_price,
+                    'name'        : Product.objects.get(id=select.product_id).name,
+                    'quantity'    : cartlist.quantity ,
+                    'total_price' : Order.objects.get(id=cartlist.order_id).total_price,
                     'purchased_at': Order.objects.get(id=cartlist.order_id).purchased_at,
-                    'address': User.objects.get(id=user.id).address
-                } # 주문내용 어떤거 return?, address 없는 경우 입력하세요도 필요?
+                    'address'     : User.objects.get(id=user.id).address
+                } 
                 result.append(order_dict)
 
-            OrderList.objects.all().delete()
+            OrderList.objects.filter(order_id=order.id).delete()
 
             return JsonResponse({'result':result}, status=200)
 
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY ERROR'}, status=400)
 
-        except OrderList.DoesNotExist:
-            return JsonResponse({'MESSAGE':'noting in cart'}, status=400)
+        except Exception as e:
+            return JsonResponse({'MESSAGE':'nothing in cart'}, status=400)
