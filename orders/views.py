@@ -9,12 +9,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http            import JsonResponse
 from django.views           import View
 
-from orders.models   import WishList, OrderList, Order, PaymentMethod, OrderStatus
-from products.models import Product, ProductSelection
-from users.models    import User
-from my_settings     import SECRET
-
-from users.utils     import Authorization_decorator
+from my_settings            import SECRET
+from orders.models          import WishList, OrderList, Order, PaymentMethod, OrderStatus
+from products.models        import Product, ProductSelection
+from users.models           import User
+from users.utils            import Authorization_decorator
 
 class OrderCheckView(View):
     @Authorization_decorator
@@ -27,7 +26,7 @@ class OrderCheckView(View):
             if (not Order.objects.filter(status_id=status_id, user_id=user.id)):
                 raise Exception
 
-            order          = Order.objects.filter(status_id=status_id, user_id=user.id) 
+            order          = Order.objects.get(status_id=status_id, user_id=user.id) 
             cartlists      = OrderList.objects.filter(order_id=order.id)
 
             result=[]
@@ -37,7 +36,7 @@ class OrderCheckView(View):
                 select       = ProductSelection.objects.get(id=selection_id)
                 total        = select.price * cartlist.quantity
 
-                order.update(
+                Order.objects.filter(status_id=status_id, user_id=user.id).update(
                         status_id    = status_id_done, 
                         address      = user.address,
                         memo         = '',
