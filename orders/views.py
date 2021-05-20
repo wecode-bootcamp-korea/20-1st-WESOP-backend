@@ -54,7 +54,7 @@ class OrderGetView(View):
         try:
             user           = request.user
             status_done    = OrderStatus.objects.get(name='주문 후')
-            orders = Order.objects.filter(status_id=status_done.id, user_id=user.id) 
+            orders         = Order.objects.filter(status_id=status_done.id, user_id=user.id) 
 
             if not orders:
                 raise Exception
@@ -65,16 +65,16 @@ class OrderGetView(View):
                 products = list(OrderList.objects.filter(order_id=order.id))
 
                 for product in products:
-                    selection_id = product.product_selection_id
-                    select    = ProductSelection.objects.get(id=selection_id)
+                    selection = product.product_selection
+                    select    = OrderList.objects.get(product_selection=selection)
 
                     order_dict = {
-                            'name'        : Product.objects.get(id=select.product_id).name,
+                            'name'        : select.product_selection.product.name,
                             'quantity'    : product.quantity,
-                            'price'       : select.price,               
-                            'size'        : ProductSelection.objects.get(id=selection_id).size,
-                            'date'        : Order.objects.get(id=product.order_id).purchased_at,
-                            'product_id'  : Product.objects.get(id=select.product_id).id
+                            'price'       : select.product_selection.price,               
+                            'size'        : select.product_selection.size,
+                            'date'        : product.purchased_at,
+                            'product_id'  : select.product_selection.product.id
                         } 
                     result.append(order_dict)
 
