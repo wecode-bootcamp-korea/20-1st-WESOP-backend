@@ -21,27 +21,22 @@ class OrderCheckView(View):
     def get(self, request):
         try:
             user           = request.user
-            status_id      = OrderStatus.objects.get(name='주문 전').id
-            status_id_done = OrderStatus.objects.get(name='주문 후').id
+            status_done = OrderStatus.objects.get(name='주문 후')
             
-            if (not Order.objects.filter(status_id=status_id, user_id=user.id)):
-                raise Exception
+            cartlists      = OrderList.objects.filter(order__status__name='주문 전', order__user=user) 
 
-            order          = Order.objects.get(status_id=status_id, user_id=user.id) 
-            cartlists      = OrderList.objects.filter(order_id=order.id)
-
-            result=[]
+            if not cartlists:
+                return JsonResponse({'MESSAGE':'nothing in cart'}, status=400)
 
             total_price = 0
 
             for cartlist in cartlists:
-                selection_id = cartlist.product_selection_id
-                select       = ProductSelection.objects.get(id=selection_id)
-                total        = select.price * cartlist.quantity
+                price        = cartlist.prduct_selection.price
+                total        = price * cartlist.quantity
                 total_price  = total_price + total
-
-            Order.objects.filter(status_id=status_id, user_id=user.id).update(
-                    status_id    = status_id_done, 
+# Order.objects.filter(status_id=status_id, user_id=user.id)
+            cartlists.order.update(
+                    status_id    = status_done.id, 
                     address      = user.address,
                     memo         = '',
                     total_price  = total_price if (total_price >= 50000) else (total+3000), 
@@ -53,20 +48,17 @@ class OrderCheckView(View):
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY ERROR'}, status=400)
 
-        except Exception as e:
-            return JsonResponse({'MESSAGE':'nothing in cart'}, status=400)
-
 class OrderGetView(View):
     @Authorization_decorator
     def get(self, request):
         try:
-            user        = request.user
-            status_id_done = OrderStatus.objects.get(name='주문 후').id
+            user           = request.user
+            status_done    = OrderStatus.objects.get(name='주문 후')
+            orders = Order.objects.filter(status_id=status_done.id, user_id=user.id) 
 
-            if (not Order.objects.filter(status_id=status_id_done, user_id=user.id)):
+            if not orders:
                 raise Exception
 
-            orders = Order.objects.filter(status_id=status_id_done, user_id=user.id) 
             result = []
 
             for order in orders:
