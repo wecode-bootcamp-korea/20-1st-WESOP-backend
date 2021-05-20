@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts       import render
 
 # Create your views here.
 import json, re, bcrypt, jwt
@@ -40,7 +40,6 @@ class OrderCheckView(View):
                     total_price  = total_price if (total_price >= 50000) else (total+3000), 
                     free_delivery= True if (total_price >= 50000) else False 
                 )
-            
             return JsonResponse({'MESSAGE':"SUCCESS"}, status=200)
 
         except KeyError:
