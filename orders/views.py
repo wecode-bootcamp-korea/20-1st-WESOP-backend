@@ -81,7 +81,8 @@ class OrderGetView(View):
                             'quantity'    : product.quantity,
                             'price'       : select.price,               
                             'size'        : ProductSelection.objects.get(id=selection_id).size,
-                            'date'        : Order.objects.get(id=product.order_id).purchased_at
+                            'date'        : Order.objects.get(id=product.order_id).purchased_at,
+                            'product_id'  : Product.objects.get(id=select.product_id).id
                         } 
                     result.append(order_dict)
 
