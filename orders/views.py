@@ -89,8 +89,5 @@ class OrderGetView(View):
             return JsonResponse({'result':result}, status=200)
         except KeyError:
             return JsonResponse({'MESSAGE':'KEY ERROR'}, status=400)
-
         except Exception as e:
             return JsonResponse({'MESSAGE':'NO ORDER HISTORY'}, status=400)
-
-
