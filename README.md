@@ -1,7 +1,7 @@
 # Team Wesop
 
 - 스킨케어 브랜드 이솝을 벤치마킹
-- 12일이라는 짧은 기간 동안 기획, 디자인에 소요되는 시간을 단축시키고 화면 & 기능 구현과 리팩토링에 중점을 두기 위한 1차 클론코딩 프로젝트
+- 12일이라는 짧은 기간 동안 기획, 디자인에 소요되는 시간을 단축시키고 화면 & 기능 구현과 리팩토링에 중점을 두기 위한 1차 프로젝트
 <br>
 
 ## 프로젝트 기간 및 인원
@@ -50,7 +50,7 @@ Backend
 [Modeling](https://aquerytool.com:443/aquerymain/index/?rurl=8afb35f3-b4f6-4dd1-aae2-b0497e086eeb)*(Password : 723o35)*
 
 **시연 영상**    
-Wesop (시연 영상 첨부 필요)
+[Wesop](https://youtu.be/J05y2eiE76Q)
 
 <br>
 
